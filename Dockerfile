@@ -43,5 +43,9 @@ COPY atlantis /usr/local/bin/atlantis
 # copy docker entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
+# copy aws credentials
+COPY credentials /home/atlantis/.aws/credentials
+RUN chown atlantis:atlantis /home/atlantis/.aws/credentials
+
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["server"]
