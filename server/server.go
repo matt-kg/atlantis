@@ -56,6 +56,10 @@ type ServerConfig struct {
 	GithubToken         string `mapstructure:"gh-token"`
 	GithubUser          string `mapstructure:"gh-user"`
 	GithubWebHookSecret string `mapstructure:"gh-webhook-secret"`
+	GitlabHostname      string `mapstructure:"gl-hostname"`
+	GitlabToken         string `mapstructure:"gl-token"`			
+	GitlabUser          string `mapstructure:"gl-user"`
+	GitlabWebHookSecret string `mapstructure:"gl-webhook-secret"`
 	LogLevel            string `mapstructure:"log-level"`
 	Port                int    `mapstructure:"port"`
 	RequireApproval     bool   `mapstructure:"require-approval"`
@@ -71,6 +75,9 @@ type CommandContext struct {
 }
 
 func NewServer(config ServerConfig) (*Server, error) {
+
+	fmt.Printf("Hello, my Github login is %s & my Gitlab login is %s\n", config.GithubUser, config.GitlabUser)
+
 	// if ~ was used in data-dir convert that to actual home directory otherwise we'll
 	// create a directory call "~" instead of actually using home
 	if strings.HasPrefix(config.DataDir, "~/") {

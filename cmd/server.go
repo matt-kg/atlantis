@@ -54,12 +54,12 @@ var stringFlags = []stringFlag{
 	},
 	{
 		name:        ghTokenFlag,
-		description: "[REQUIRED] GitHub token of API user. Can also be specified via the ATLANTIS_GH_TOKEN environment variable.",
+		description: "[REQUIRED for GitHub] GitHub token of API user. Can also be specified via the ATLANTIS_GH_TOKEN environment variable.",
 		env:         "ATLANTIS_GH_TOKEN",
 	},
 	{
 		name:        ghUserFlag,
-		description: "[REQUIRED] GitHub username of API user.",
+		description: "[REQUIRED for GitHub] GitHub username of API user.",
 	},
 	{
 		name:        ghWebHookSecret,
@@ -73,12 +73,12 @@ var stringFlags = []stringFlag{
 	},
 	{
 		name:        glTokenFlag,
-		description: "[REQUIRED] GitLab token of API user. Can also be specified via the ATLANTIS_GL_TOKEN environment variable.",
+		description: "[REQUIRED for GitLab] GitLab token of API user. Can also be specified via the ATLANTIS_GL_TOKEN environment variable.",
 		env:         "ATLANTIS_GL_TOKEN",
 	},
 	{
 		name:        glUserFlag,
-		description: "[REQUIRED] GitLab username of API user.",
+		description: "[REQUIRED for GitLab] GitLab username of API user.",
 	},
 	{
 		name:        glWebHookSecret,
@@ -201,11 +201,17 @@ func validate(config server.ServerConfig) error {
 	if logLevel != "debug" && logLevel != "info" && logLevel != "warn" && logLevel != "error" {
 		return errors.New("invalid log level: not one of debug, info, warn, error")
 	}
-	if config.GithubUser == "" {
-		return fmt.Errorf("--%s must be set", ghUserFlag)
+	if (config.GithubUser == "") && (config.GitlabUser == "") {
+		return fmt.Errorf("Either --%s or --%s must be set", ghUserFlag, glUserFlag)
 	}
-	if config.GithubToken == "" {
+	if (config.GithubUser != "") && (config.GitlabUser != "") {
+		return fmt.Errorf("Only one of --%s or --%s can be set", ghUserFlag, glUserFlag)
+	} 
+	if (config.GithubUser != "") && (config.GithubToken == "") {
 		return fmt.Errorf("--%s must be set", ghTokenFlag)
+	}
+	if (config.GitlabUser != "") && (config.GitlabToken == "") {
+		return fmt.Errorf("--%s must be set", glTokenFlag)
 	}
 	return nil
 }
